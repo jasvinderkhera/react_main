@@ -11,6 +11,8 @@ import NameCard from './components/utils/NameCard';
 import Table from './components/utils/Table';
 import ServerData from './components/utils/ServerData';
 import ServerData2 from './components/utils/ServerData2';
+import Form_submit from './components/utils/NewForm';
+import App from './App';
 import './index.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -28,6 +30,8 @@ root.render(
         <Route path="/table" element={<Table />} />
         <Route path="/serverdata" element={<ServerData />} />
         <Route path="/serverdata2" element={<ServerData2 />} />
+        <Route path="/app" element={<App />} />
+        <Route path="/form_submit" element={<Form_submit />} />
       </Routes>
     </BrowserRouter>
   </>

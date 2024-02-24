@@ -1,28 +1,12 @@
 {
-  "data": [
+  "form_data": [
     {
       "id": "1",
-      "fullname": "John Doe",
+      "name": "John Doe",
       "position": "Software Engineer",
-      "department": "Engineering",
+      "department": "Development",
       "salary": "80000",
-      "hiredate": ""
-    },
-    {
-      "id": "2",
-      "fullname": "Jane Smith",
-      "position": "HR Manager",
-      "department": "Human Resources",
-      "salary": "70000",
-      "hiredate": "2021-09-20"
-    },
-    {
-      "id": "3",
-      "fullname": "Michael Johnson",
-      "position": "Marketing Specialist",
-      "department": "Marketing",
-      "salary": "60000",
-      "hiredate": "2023-03-10"
+      "hiredate": "2022-01-15"
     }
   ]
 }

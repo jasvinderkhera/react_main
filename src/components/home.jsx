@@ -13,6 +13,8 @@ function Home() {
         <li><Link className="text-decoration-none" to={"/table"}>Table</Link></li> 
         <li><Link className="text-decoration-none" to={"/serverdata"}>ServerData</Link></li> 
         <li><Link className="text-decoration-none" to={"/serverdata2"} target="_blank">ServerData2</Link></li> 
+        <li><Link className="text-decoration-none" to={"/app"} target="_blank">App</Link></li> 
+        <li><Link className="text-decoration-none" to={"/Form_submit"} target="_blank">Form_submit</Link></li> 
       </ul>
     </section>
   );
