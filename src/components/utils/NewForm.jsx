@@ -9,6 +9,7 @@ function Form_submit() {
     getdata();
   }, []);
 
+  // to fetch updated data from data
   function getdata() {
     fetch("http://localhost:4001/form_data")
       .then(function (res) {
@@ -22,69 +23,8 @@ function Form_submit() {
       });
   }
 
-  async function deleteData(row_id) {
-    try {
-      const response = await axios.delete(
-        `http://localhost:4001/form_data/${row_id}`
-      );
-
-      if (response.status === 200) {
-        alert("record deleted successfully!");
-        getdata();
-      }
-    } catch (error) {
-      console.log("error", error.message);
-      alert(error.message);
-      return error;
-    }
-  }
-
-  async function updateRow(current_data) {
-    setform_Data(current_data);
-    // getdata({ ...current_data });
-    // try {
-    //   const { status } = await axios.put(
-    //     `http://localhost:4001/form_data/${current_data.id}`,
-    //     current_data
-    //   );
-    //   if (status === 200) {
-    //     alert("record updated successfully!");
-    //   }
-    // } catch (error) {
-    //   console.log("error", error.message);
-    //   return error;
-    // }
-    // getdata(...current_data);
-  }
-
-  function initialstate() {
-    return {
-      name: "",
-      position: "",
-      department: "",
-      salary: "",
-      hiredate: "",
-    };
-  }
-  function onChangeHandler(event) {
-    let key = event.target.name;
-    setform_Data({ ...form_data, [key]: event.target.value });
-  }
-
-  func
-  async function submit() {
-    // try {
-    //   const { status } = await axios.put(
-    //     `http://localhost:4001/form_data/${form_data.id}`,
-    //     form_data
-    //   );
-    //   if (status === 200) {
-    //     alert("record updated successfully!");
-    //   }
-    // } catch (error) {
-    //   console.log("error", error.message);
-    //   return error;
-    // }
+  // to create new enter
+  async function createEntry() {
     try {
       await axios.post("http://localhost:4001/form_data", {
         name: form_data.name,
@@ -97,8 +37,77 @@ function Form_submit() {
       console.log("error", error.message);
       return error;
     }
-    setform_Data(initialstate());
-    getdata();
+  }
+
+  // to delete enter based on id you are receiving in parameter
+  async function deleteData(row_id) {
+    try {
+      const response = await axios.delete(
+        `http://localhost:4001/form_data/${row_id}`
+      );
+
+      if (response.status === 200) {
+        alert("record deleted successfully!");
+        getdata()
+      }
+    } catch (error) {
+      console.log("error", error.message);
+      alert(error.message);
+      return error;
+    }
+  }
+
+  // to edit entry based on current object you are getting in parameter
+  async function updateRow() {
+    try {
+      const { status } = await axios.put(
+        `http://localhost:4001/form_data/${form_data.id}`,
+        form_data
+      );
+      if (status === 200) {
+        alert("record updated successfully!");
+      }
+    } catch (error) {
+      console.log("error", error.message);
+      return error;
+    }
+  }
+
+  function initialstate() {
+    return {
+      name: "",
+      position: "",
+      department: "",
+      salary: "",
+      hiredate: "",
+    };
+  }
+
+  function onChangeHandler(event) {
+    let key = event.target.name;
+    setform_Data({ ...form_data, [key]: event.target.value });
+  }
+
+  function validate() {
+    if (form_data.department && form_data.hiredate && form_data.name && form_data.position) {
+      return true
+    } else {
+      alert('please fill complete info');
+      return false
+    }
+  }
+
+  async function submit() {
+    if (validate()) {
+      if (form_data.id) {
+        await updateRow()
+      } else {
+        await createEntry()
+      }
+
+      setform_Data(initialstate());
+      getdata()
+    }
   }
 
   return (
@@ -236,7 +245,7 @@ function Form_submit() {
                     <button
                       className="btn btn-secondary"
                       onClick={function () {
-                        updateRow(item);
+                        setform_Data(item);
                       }}
                     >
                       EDIT DATA
