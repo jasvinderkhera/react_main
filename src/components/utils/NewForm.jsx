@@ -22,12 +22,48 @@ function Form_submit() {
       });
   }
 
+  async function deleteData(row_id) {
+    try {
+      const response = await axios.delete(
+        `http://localhost:4001/form_data/${row_id}`
+      );
+
+      if (response.status === 200) {
+        alert("record deleted successfully!");
+        getdata();
+      }
+    } catch (error) {
+      console.log("error", error.message);
+      alert(error.message);
+      return error;
+    }
+  }
+
+  async function updateRow(current_data) {
+    setform_Data(current_data);
+    // getdata({ ...current_data });
+    // try {
+    //   const { status } = await axios.put(
+    //     `http://localhost:4001/form_data/${current_data.id}`,
+    //     current_data
+    //   );
+    //   if (status === 200) {
+    //     alert("record updated successfully!");
+    //   }
+    // } catch (error) {
+    //   console.log("error", error.message);
+    //   return error;
+    // }
+    // getdata(...current_data);
+  }
+
   function initialstate() {
     return {
-      firstName: "",
-      lastName: "",
-      email: "",
-      mobile: "",
+      name: "",
+      position: "",
+      department: "",
+      salary: "",
+      hiredate: "",
     };
   }
   function onChangeHandler(event) {
@@ -35,15 +71,27 @@ function Form_submit() {
     setform_Data({ ...form_data, [key]: event.target.value });
   }
 
+  func
   async function submit() {
+    // try {
+    //   const { status } = await axios.put(
+    //     `http://localhost:4001/form_data/${form_data.id}`,
+    //     form_data
+    //   );
+    //   if (status === 200) {
+    //     alert("record updated successfully!");
+    //   }
+    // } catch (error) {
+    //   console.log("error", error.message);
+    //   return error;
+    // }
     try {
       await axios.post("http://localhost:4001/form_data", {
-        id: form_data.id,
         name: form_data.name,
         position: form_data.position,
         department: form_data.department,
         salary: form_data.salary,
-        hiredate: form_data.hiredate
+        hiredate: form_data.hiredate,
       });
     } catch (error) {
       console.log("error", error.message);
@@ -55,25 +103,10 @@ function Form_submit() {
 
   return (
     <section>
-      <div>
+      <div className="form">
         <form autoComplete="on" />
         <table>
           <tbody>
-            <tr>
-              <td>
-                <label htmlFor="ID">ID</label>
-              </td>
-              <td>
-                <input
-                  type="number"
-                  value={form_data.id}
-                  id="id"
-                  name="id"
-                  onChange={onChangeHandler}
-                ></input>
-              </td>
-            </tr>
-
             <tr>
               <td>
                 <label htmlFor="name">Name</label>
@@ -150,6 +183,7 @@ function Form_submit() {
                   Submit
                 </button>
               </td>
+              <td></td>
             </tr>
           </tbody>
         </table>
@@ -167,33 +201,52 @@ function Form_submit() {
               </>
             );
           })} */}
-          <table className='table'>
-  <thead >
-    <tr>
-      <th scope='col'>ID</th>
-      <th scope='col'>Name</th>
-      <th scope='col'>Position</th>
-      <th scope='col'>Department</th>
-      <th scope='col'>Salary</th>
-      <th scope='col'>Hire Date</th>
-    </tr>
-    </thead>
-    <tbody>
-{table_data.map(function(item){
-    return (
-      <tr>
-        <td >{item.id}</td>
-        <td>{item.name}</td>
-        <td>{item.position}</td>
-        <td>{item.department}</td>
-        <td>{item.salary}</td>
-        <td>{item.hiredate}</td>
-      </tr>
-    )
-}
-)}
-</tbody>
-</table>
+        <table className="table">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Position</th>
+              <th scope="col">Department</th>
+              <th scope="col">Salary</th>
+              <th scope="col">Hire Date</th>
+              <th scope="col">Delete Button</th>
+              <th scope="col">Edit Button</th>
+            </tr>
+          </thead>
+          <tbody>
+            {table_data.map(function (item) {
+              return (
+                <tr>
+                  <td>{item.id}</td>
+                  <td>{item.name}</td>
+                  <td>{item.position}</td>
+                  <td>{item.department}</td>
+                  <td>{item.salary}</td>
+                  <td>{item.hiredate}</td>
+                  <td>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => deleteData(item.id)}
+                    >
+                      DELETE DATA
+                    </button>
+                  </td>
+                  <td>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={function () {
+                        updateRow(item);
+                      }}
+                    >
+                      EDIT DATA
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </section>
   );
