@@ -11,14 +11,29 @@ import NameCard from './components/utils/NameCard';
 import Table from './components/utils/Table';
 import ServerData from './components/utils/ServerData';
 import ServerData2 from './components/utils/ServerData2';
-import Form_submit from './components/utils/NewForm';
+import DependencyArray from './components/utils/DependencyArray';
+import Formik from './components/utils/Formik';
 import App from './App';
 import './index.css';
+import NewForm from './components/utils/NewForm';
+import { ToastContainer } from "react-toastify";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <>
     <BrowserRouter>
+    <ToastContainer
+position="top-right"
+autoClose={3000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="colored"
+/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/form" element={<Form />} />
@@ -31,7 +46,9 @@ root.render(
         <Route path="/serverdata" element={<ServerData />} />
         <Route path="/serverdata2" element={<ServerData2 />} />
         <Route path="/app" element={<App />} />
-        <Route path="/form_submit" element={<Form_submit />} />
+        <Route path="/newform" element={<NewForm />} />
+        <Route path="/DependencyArray" element={<DependencyArray />} />
+        <Route path="/formik" element={<Formik />} />
       </Routes>
     </BrowserRouter>
   </>

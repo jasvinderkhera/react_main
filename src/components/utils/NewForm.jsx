@@ -1,264 +1,209 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
+import {
+  getEmployeeData,
+  deleteData,
+  updateData,
+  createData,
+} from "../Crud_Components";
+import {toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useEffect, useState } from "react";
+import { useFormik } from "formik";
+import { formSchema } from "../../schemas/index2";
 
-function Form_submit() {
-  const [form_data, setform_Data] = useState(initialstate());
-  const [table_data, settable_Data] = useState([]);
 
-  useEffect(function () {
-    getdata();
-  }, []);
+function NewForm() {
+const [data, setData] = useState(initialState());
+const [tableData, settableData] = useState([]);
 
-  // to fetch updated data from data
-  function getdata() {
-    fetch("http://localhost:4001/form_data")
-      .then(function (res) {
-        return res.json();
-      })
-      .then(function (finalres) {
-        settable_Data(finalres);
-      })
-      .catch(function (error) {
-        console.log(error.message);
-      });
+useEffect(() => {
+  getData();
+}, []);
+
+function initialState() {
+  return {
+    name: "",
+    position: "",
+    department: "",
+    salary: "",
+    hiredate: "",
+  };
+};
+
+const getData = async () => {
+  const res = await getEmployeeData();
+  if (res.isSuccess) {
+    console.log(res.data);
+    settableData(res.data);
+  } else {
+    toast.error(res.errMsg);
   }
+};
 
-  // to create new enter
-  async function createEntry() {
-    try {
-      await axios.post("http://localhost:4001/form_data", {
-        name: form_data.name,
-        position: form_data.position,
-        department: form_data.department,
-        salary: form_data.salary,
-        hiredate: form_data.hiredate,
-      });
-    } catch (error) {
-      console.log("error", error.message);
-      return error;
-    }
+const createEntry = async (data) => {
+  const res = await createData(data);
+  console.log("data",res)
+  if (res.status === 201) {
+    toast.success("User Created Successfully");
   }
+  return res;
+};
 
-  // to delete enter based on id you are receiving in parameter
-  async function deleteData(row_id) {
-    try {
-      const response = await axios.delete(
-        `http://localhost:4001/form_data/${row_id}`
-      );
-
-      if (response.status === 200) {
-        alert("record deleted successfully!");
-        getdata()
-      }
-    } catch (error) {
-      console.log("error", error.message);
-      alert(error.message);
-      return error;
-    }
+const deleteEntry = async (user_id) => {
+  const res = await deleteData(user_id);
+  if (res.status === 200) {
+    toast.success("User Deleted Successfully");
   }
+  getData();
+};
 
-  // to edit entry based on current object you are getting in parameter
-  async function updateRow() {
-    try {
-      const { status } = await axios.put(
-        `http://localhost:4001/form_data/${form_data.id}`,
-        form_data
-      );
-      if (status === 200) {
-        alert("record updated successfully!");
-      }
-    } catch (error) {
-      console.log("error", error.message);
-      return error;
-    }
+const updateEntry = async (data) => {
+  const res = await updateData(data);
+  if (res.status === 200) {
+    toast.success("User updated successfully");
   }
+  return res;
+};
 
-  function initialstate() {
-    return {
-      name: "",
-      position: "",
-      department: "",
-      salary: "",
-      hiredate: "",
-    };
-  }
-
-  function onChangeHandler(event) {
-    let key = event.target.name;
-    setform_Data({ ...form_data, [key]: event.target.value });
-  }
-
-  function validate() {
-    if (form_data.department && form_data.hiredate && form_data.name && form_data.position) {
-      return true
-    } else {
-      alert('please fill complete info');
-      return false
-    }
-  }
-
-  async function submit() {
-    if (validate()) {
-      if (form_data.id) {
-        await updateRow()
+const { values, errors, touched, handleBlur, handleSubmit, handleChange } =
+  useFormik({
+    initialValues: data,
+    validationSchema: formSchema,
+    onSubmit: async (values, action) => {
+      if (data.id) {
+        const res = await updateEntry(values);
       } else {
-        await createEntry()
+        const res = await createEntry(values);
       }
+      setData(initialState);
+      await getData();
+      action.resetForm();
+    },
+    enableReinitialize: true,
+  });
 
-      setform_Data(initialstate());
-      getdata()
-    }
-  }
 
   return (
-    <section>
-      <div className="form">
-        <form autoComplete="on" />
-        <table>
-          <tbody>
+    <div class='mx-5 p-5'>
+      <form>
+        <div class="form-group py-sm-2">
+        <label>
+          Name:
+          <input class="form-control"
+            type="text"
+            name="name"
+            id="name"
+            placeholder="Enter name"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.name}
+          />
+        </label>
+        {errors.name && touched.name ? <p>{errors.name}</p> : null}
+        </div>
+        <div class="form-group py-sm-2">
+        <label>
+          Position:
+          <input
+          class="form-control"
+            type="text"
+            name="position"
+            id="position"
+            placeholder="Enter position"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.position}
+          />
+        </label>
+        {errors.position && touched.position ? <p>{errors.position}</p> : null}
+        </div>
+        <div class="form-group py-sm-2">
+        <label>
+          Department:
+          <input
+          class="form-control"
+            type="text"
+            name="department"
+            id="department"
+            placeholder="Enter department"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.department}
+          />
+        </label>
+        {errors.department && touched.department ? <p>{errors.department}</p> : null}
+        </div>
+        <div class="form-group py-sm-2">
+        <label>
+          Salary:
+          <input
+          class="form-control"
+            type="number"
+            name="salary"
+            id="salary"
+            placeholder="Enter salary"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.salary}
+          />
+        </label>
+        {errors.salary && touched.salary ? <p>{errors.salary}</p> : null}
+        </div>
+        <div class="form-group py-sm-2">
+        <label>
+          HireDate:
+          <input
+          class="form-control"
+            type="date"
+            name="hiredate"
+            id="hiredate"
+            placeholder="Enter hiredate"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.hiredate}
+          />
+        </label>
+        {errors.hiredate && touched.hiredate ? <p>{errors.hiredate}</p> : null}
+        </div>
+        <button type="button" onClick={handleSubmit}>
+          Submit
+        </button>
+      </form>
+
+<div>
+      <table class="table">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col">ID</th>
+          <th scope="col">Name</th>
+          <th scope="col">Position</th>
+          <th scope="col">Department</th>
+          <th scope="col">Salary</th>
+          <th scope="col">Hire Date</th>
+          <th scope="col">Actions</th>
+        </tr>
+        </thead>
+
+        {tableData.map((item) => {
+          return (
             <tr>
+              <td>{item.id}</td>
+              <td>{item.name}</td>
+              <td>{item.position}</td>
+              <td>{item.department}</td>
+              <td>{item.salary}</td>
+              <td>{item.hiredate}</td>
               <td>
-                <label htmlFor="name">Name</label>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={form_data.name}
-                  id="name"
-                  name="name"
-                  onChange={onChangeHandler}
-                ></input>
+                <button class="btn btn-danger" onClick={() => {deleteEntry(item.id)}}>Delete Data</button>
+                <button class="btn btn-outline-secondary" onClick={() => {setData(item)}}>Update Data</button>
               </td>
             </tr>
-            <tr>
-              <td>
-                <label htmlFor="position">Position</label>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={form_data.position}
-                  id="position"
-                  name="position"
-                  onChange={onChangeHandler}
-                ></input>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label htmlFor="department">Department</label>
-              </td>
-              <td>
-                <input
-                  type="text"
-                  value={form_data.department}
-                  id="department"
-                  name="department"
-                  onChange={onChangeHandler}
-                ></input>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label htmlFor="salary">Salary</label>
-              </td>
-              <td>
-                <input
-                  type="number"
-                  value={form_data.salary}
-                  id="salary"
-                  name="salary"
-                  onChange={onChangeHandler}
-                ></input>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <label htmlFor="hiredate">HireDate</label>
-              </td>
-              <td>
-                <input
-                  type="date"
-                  value={form_data.hiredate}
-                  id="hiredate"
-                  name="hiredate"
-                  onChange={onChangeHandler}
-                ></input>
-              </td>
-            </tr>
-            <tr>
-              <td>
-                <button type="button" onClick={submit}>
-                  Submit
-                </button>
-              </td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div>
-        {/* {!!table_data.length &&
-          table_data.map(function (item) {
-            return (
-              <>
-                <div>{item.id}</div>
-                <div>{item.firstName}</div>
-                <div>{item.lastName}</div>
-                <div>{item.email}</div>
-                <div>{item.mobile}</div>
-              </>
-            );
-          })} */}
-        <table className="table">
-          <thead>
-            <tr>
-              <th scope="col">ID</th>
-              <th scope="col">Name</th>
-              <th scope="col">Position</th>
-              <th scope="col">Department</th>
-              <th scope="col">Salary</th>
-              <th scope="col">Hire Date</th>
-              <th scope="col">Delete Button</th>
-              <th scope="col">Edit Button</th>
-            </tr>
-          </thead>
-          <tbody>
-            {table_data.map(function (item) {
-              return (
-                <tr>
-                  <td>{item.id}</td>
-                  <td>{item.name}</td>
-                  <td>{item.position}</td>
-                  <td>{item.department}</td>
-                  <td>{item.salary}</td>
-                  <td>{item.hiredate}</td>
-                  <td>
-                    <button
-                      className="btn btn-danger"
-                      onClick={() => deleteData(item.id)}
-                    >
-                      DELETE DATA
-                    </button>
-                  </td>
-                  <td>
-                    <button
-                      className="btn btn-secondary"
-                      onClick={function () {
-                        setform_Data(item);
-                      }}
-                    >
-                      EDIT DATA
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-    </section>
+          );
+        })}
+      </table>
+    </div>
+    </div>
   );
 }
 
-export default Form_submit;
+export default NewForm;

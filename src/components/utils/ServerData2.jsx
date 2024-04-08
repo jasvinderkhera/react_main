@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 function ServerData() {
     const [data, setData] = useState([])
     useEffect(function () {
-        fetch('http://localhost:4001/data')
+        fetch('http://localhost:4001/form_data')
         .then(function (res) {return res.json()})
         .then(function (finalRes){
             console.log("finalRes", finalRes);
@@ -49,7 +49,7 @@ function ServerData() {
     return (
       <tr>
         <td >{item.id}</td>
-        <td>{item.fullname}</td>
+        <td>{item.name}</td>
         <td>{item.position}</td>
         <td>{item.department}</td>
         <td>{item.salary}</td>
